@@ -1,7 +1,7 @@
 package cool.project.generateresume.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import cool.project.generateresume.exception.NotFoundException
+import cool.project.generateresume.exception.IncorrectInputException
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -21,7 +21,7 @@ class ExceptionController {
 
     @GetMapping("/")
     fun rootToSwaggerUiRedirect(): RedirectView {
-        return RedirectView("/swagger-ui.html")
+        return RedirectView("/swagger-ui/")
     }
 
     @ExceptionHandler
@@ -47,20 +47,20 @@ class ExceptionController {
     }
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    fun handleNotFoundException(
+    @ResponseStatus(HttpStatus.EXPECTATION_FAILED)
+    fun handleIncorrectInputException(
         request: HttpServletRequest,
         response: HttpServletResponse,
-        ex: NotFoundException
+        ex: IncorrectInputException
     ) {
         logger.error("Server error", ex)
-        response.status = HttpStatus.NOT_FOUND.value()
+        response.status = HttpStatus.EXPECTATION_FAILED.value()
         response.contentType = MediaType.APPLICATION_JSON_VALUE
         response.characterEncoding = "UTF-8"
         response.writer.write(
             ObjectMapper().writeValueAsString(
                 CustomExceptionResponse(
-                    status = HttpStatus.NOT_FOUND.value(),
+                    status = HttpStatus.EXPECTATION_FAILED.value(),
                     error = ex.message ?: ex.localizedMessage,
                     path = request.requestURI
                 )

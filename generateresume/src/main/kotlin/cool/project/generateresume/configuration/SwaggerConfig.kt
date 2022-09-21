@@ -29,9 +29,9 @@ class SwaggerConfig() {
 
     private val apiInfo: ApiInfo
         get() = ApiInfoBuilder()
-            .title("Simple app")
-            .description("Simple app documentation page, This is for test purpose. like a testing field")
+            .title("Generate resume")
+            .description("This is for test purpose. like a testing field")
             .version("0.0.1")
-            .contact(Contact("Stob", "http://www.stob.com", "info@stob.com"))
+            .contact(Contact("Progmarine", "http://www.google.com", "sadibekov.1999@gmail.com"))
             .build()
 }
