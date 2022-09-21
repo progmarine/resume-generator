@@ -1,6 +1,7 @@
 package cool.project.generateresume.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import cool.project.generateresume.exception.DocumentException
 import cool.project.generateresume.exception.IncorrectInputException
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
@@ -53,7 +54,7 @@ class ExceptionController {
         response: HttpServletResponse,
         ex: IncorrectInputException
     ) {
-        logger.error("Server error", ex)
+        logger.error("Incorrect input", ex)
         response.status = HttpStatus.EXPECTATION_FAILED.value()
         response.contentType = MediaType.APPLICATION_JSON_VALUE
         response.characterEncoding = "UTF-8"
@@ -61,6 +62,28 @@ class ExceptionController {
             ObjectMapper().writeValueAsString(
                 CustomExceptionResponse(
                     status = HttpStatus.EXPECTATION_FAILED.value(),
+                    error = ex.message ?: ex.localizedMessage,
+                    path = request.requestURI
+                )
+            )
+        )
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    fun handleDocumentException(
+        request: HttpServletRequest,
+        response: HttpServletResponse,
+        ex: DocumentException
+    ) {
+        logger.error("Server error", ex)
+        response.status = HttpStatus.INTERNAL_SERVER_ERROR.value()
+        response.contentType = MediaType.APPLICATION_JSON_VALUE
+        response.characterEncoding = "UTF-8"
+        response.writer.write(
+            ObjectMapper().writeValueAsString(
+                CustomExceptionResponse(
+                    status = HttpStatus.INTERNAL_SERVER_ERROR.value(),
                     error = ex.message ?: ex.localizedMessage,
                     path = request.requestURI
                 )
