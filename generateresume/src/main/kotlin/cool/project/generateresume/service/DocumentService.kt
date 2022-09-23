@@ -1,6 +1,7 @@
 package cool.project.generateresume.service
 
 import com.itextpdf.text.*
+import com.itextpdf.text.List
 import com.itextpdf.text.pdf.PdfWriter
 import cool.project.generateresume.dto.DocumentDto
 import cool.project.generateresume.dto.ResumeDto
@@ -43,12 +44,61 @@ class DocumentService {
             fullName.alignment = Element.ALIGN_CENTER
             document.add(fullName)
             document.add(Chunk.NEWLINE)
-
+            val bio = Paragraph("${resume.contact.email}, ${resume.contact.portfolio}, ${resume.contact.phoneNumber}")
+            bio.alignment = Element.ALIGN_CENTER
+            document.add(bio)
+            val educationSection = Paragraph("EDUCATION", fontSectionName)
+            document.add(educationSection)
+            val educationList = List()
             resume.education.forEach { edu ->
-                val listOfEducation = ListItem(edu.institutionName, fontSectionName)
-                listOfEducation.alignment = Element.ALIGN_LEFT
+                educationList.add(
+                    Chunk(
+                        "${edu.institutionName} \n" +
+                                "${edu.degree} \n" +
+                                "${edu.major} \n" +
+                                "${edu.dateStart} \n" +
+                                "${edu.dateEnd} \n" +
+                                "${edu.grade}",
+                        fontSectionElements
+                    )
+                )
+                document.add(educationList)
             }
-            //TODO: Create list of education, experience, chunk of skills
+            val workSection = Paragraph("WORK", fontSectionName)
+            document.add(workSection)
+            val workList = List()
+            resume.experience.forEach { work ->
+                workList.add(
+                    Chunk(
+                        "${work.companyName} \n" +
+                                "${work.positionName} \n" +
+                                "${work.dateStart} \n" +
+                                "${work.dateEnd} \n" +
+                                "${work.description}",
+                        fontSectionElements
+                    )
+                )
+                document.add(workList)
+            }
+            val skills = Paragraph("SKILLS", fontSectionName)
+            document.add(skills)
+            val skillsList = List()
+            skillsList.add(Chunk(resume.skills.joinToString(separator = " | ") { it }, fontSectionElements))
+            document.add(skillsList)
+            val projects = Paragraph("PROJECTS", fontSectionName)
+            document.add(projects)
+            val projectList = List()
+            resume.projects?.forEach { project ->
+                projectList.add(
+                    Chunk(
+                        "${project.name} \n" +
+                                "${project.link} \n" +
+                                "${project.description}",
+                        fontSectionElements
+                    )
+                )
+                document.add(projectList)
+            }
             document.close()
         } catch (e: Exception) {
             throw DocumentException(e.message)
