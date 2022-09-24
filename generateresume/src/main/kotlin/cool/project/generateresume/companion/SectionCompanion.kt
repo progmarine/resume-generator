@@ -1,4 +1,4 @@
-package cool.project.generateresume.service
+package cool.project.generateresume.companion
 
 import com.itextpdf.text.BaseColor
 import com.itextpdf.text.Font
@@ -17,7 +17,7 @@ class SectionCompanion {
             BaseColor.BLACK
         )
 
-        val FONT_FULL_NAME = FontFactory.getFont(
+        val FONT_FULL_NAME: Font = FontFactory.getFont(
             FontFactory.TIMES, 14f,
             BaseColor.BLACK
         )

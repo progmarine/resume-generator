@@ -1,11 +1,11 @@
-package cool.project.generateresume.service
+package cool.project.generateresume.service.sectionparts
 
 import com.itextpdf.text.Document
 import com.itextpdf.text.List
 import com.itextpdf.text.Paragraph
+import cool.project.generateresume.companion.SectionCompanion.Companion.SECTION_NAME_FONT
 import cool.project.generateresume.dto.ResumeDto
-import cool.project.generateresume.service.SectionCompanion.Companion.SECTION_ELEMENT_FONT
-import cool.project.generateresume.service.SectionCompanion.Companion.SECTION_NAME_FONT
+import cool.project.generateresume.service.Section
 import org.springframework.stereotype.Service
 
 @Service
@@ -15,16 +15,17 @@ class ExperienceService : Section {
         val workSectionName = Paragraph("WORK", SECTION_NAME_FONT)
         document.add(workSectionName)
         val workList = List(List.UNORDERED)
+        workList.setListSymbol("• ")
         resume.experience.forEach { work ->
             val info = workInfo(work)
-            workList.add(Paragraph(info, SECTION_ELEMENT_FONT))
+            workList.add(info)
         }
         document.add(workList)
     }
 
-    private fun workInfo(work: ResumeDto.Experience) = "${work.companyName} \n" +
-            "${work.positionName} \n" +
-            "${work.dateStart} \n" +
-            "${work.dateEnd} \n" +
-            "${work.description}"
+    private fun workInfo(work: ResumeDto.Experience): String {
+        val title = "${work.companyName} | ${work.dateStart} - ${work.dateEnd}\n"
+        val body = "${work.positionName} \n${work.description}"
+        return title + body
+    }
 }
