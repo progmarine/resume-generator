@@ -2,21 +2,15 @@ package cool.project.generateresume.controller
 
 import cool.project.generateresume.dto.DocumentDto
 import cool.project.generateresume.dto.ResumeDto
-import cool.project.generateresume.enums.DocumentStatus
-import cool.project.generateresume.rest.CustomWebResponse
 import cool.project.generateresume.service.DocumentService
 import io.swagger.annotations.Api
 import io.swagger.annotations.ApiOperation
-import org.springframework.core.io.InputStreamResource
-import org.springframework.http.HttpHeaders
-import org.springframework.http.MediaType
-import org.springframework.http.ResponseEntity
+import org.springframework.http.*
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RestController
-import java.io.FileInputStream
-import java.io.FileOutputStream
+import java.nio.charset.StandardCharsets
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
@@ -34,24 +28,24 @@ class DocumentController(private val documentService: DocumentService) {
     @ApiOperation(value = "Generate resume", notes = "Fill each field for your resume")
     @RequestMapping(
         value = ["/generate-resume"],
-        method = [RequestMethod.POST], produces = [MediaType.APPLICATION_PDF_VALUE]
+        method = [RequestMethod.POST], produces = [MediaType.APPLICATION_OCTET_STREAM_VALUE]
     )
     fun generateResume(
         @RequestBody(required = true) resumeDto: ResumeDto,
         response: HttpServletResponse,
         request: HttpServletRequest
-    ): ResponseEntity<InputStreamResource> {
-        response.contentType = "application/pdf"
-        val headers = HttpHeaders()
-        headers.add("Content-Disposition", "inline; filename=citiesreport.pdf")
+    ): ResponseEntity<ByteArray> {
+
         val doc = documentService.generateResume(resumeDto)
 
+        val contentDisposition = ContentDisposition
+            .builder("attachment")
+            .filename("resume.pdf", StandardCharsets.UTF_8)
+            .build()
 
-        return ResponseEntity
-            .ok()
-            .headers(headers)
-            .contentType(MediaType.APPLICATION_PDF)
-            .body( InputStreamResource(doc))
+        val headers = HttpHeaders()
+        headers.contentDisposition = contentDisposition
+        return ResponseEntity(doc, headers, HttpStatus.OK)
     }
 
 }

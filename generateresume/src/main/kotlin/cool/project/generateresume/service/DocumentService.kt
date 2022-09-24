@@ -21,7 +21,7 @@ class DocumentService {
         throw IncorrectInputException("Document name should not be null or empty")
     }
 
-    fun generateResume(resume: ResumeDto): ByteArrayInputStream {
+    fun generateResume(resume: ResumeDto): ByteArray {
         val document = Document()
         val out = ByteArrayOutputStream()
         try {
@@ -103,7 +103,7 @@ class DocumentService {
         } catch (e: Exception) {
             throw DocumentException(e.message)
         }
-        return ByteArrayInputStream(out.toByteArray())
+        return out.toByteArray()
     }
 
     companion object {
