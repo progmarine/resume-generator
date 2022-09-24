@@ -1,6 +1,5 @@
 package cool.project.generateresume.controller
 
-import cool.project.generateresume.dto.DocumentDto
 import cool.project.generateresume.dto.ResumeDto
 import cool.project.generateresume.service.DocumentService
 import io.swagger.annotations.Api
@@ -18,12 +17,6 @@ import javax.servlet.http.HttpServletResponse
 @Api(tags = ["Document Controller"])
 @RestController
 class DocumentController(private val documentService: DocumentService) {
-
-    @ApiOperation(value = "Print document name", notes = "Type input and expect to see output")
-    @RequestMapping(value = ["/print-doc-name"], method = [RequestMethod.POST])
-    fun printDocName(@RequestBody(required = true) document: DocumentDto): String {
-        return documentService.docName(document)
-    }
 
     @ApiOperation(value = "Generate resume", notes = "Fill each field for your resume")
     @RequestMapping(

@@ -6,7 +6,7 @@ import java.time.LocalDate
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class ResumeDto(
-    @JsonProperty("name")
+    @JsonProperty("full_name")
     val name: String,
     @JsonProperty("contact")
     val contact: Contact,
